@@ -25,5 +25,8 @@ vignettes/*.pdf
 .httr-oauth
 
 # vim and VS temp files
-*.suo
+**.suo
 *.swp
+
+# Generated RMarkdown HTML
+*.html
