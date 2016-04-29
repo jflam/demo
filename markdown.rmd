@@ -14,7 +14,7 @@ colnames(airports) <- c("ID", "name", "city", "country", "IATA_FAA", "ICAO", "la
 This data set contains airports from all over the world. Let's get only the 
 airports from the United States.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 
 library(dplyr)
 usa_airports <- airports %>% filter(country == "United States")
