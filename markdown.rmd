@@ -1,0 +1,44 @@
+---
+title: "Airports in the United States"
+output: html document
+---
+
+Let's load a list of airport data from https://github.com/jpatokal/openflights
+
+```{r}
+airports <- read.csv("airports.dat", header = FALSE)
+colnames(airports) <- c("ID", "name", "city", "country", "IATA_FAA", "ICAO", "lat", "lon", "altitude", "timezone", "DST", "Region")
+
+```
+
+This data set contains airports from all over the world. Let's get only the 
+airports from the United States.
+
+```{r}
+
+library(dplyr)
+usa_airports <- airports %>% filter(country == "United States")
+
+library(DT)
+datatable(usa_airports[,c("name", "city", "country", "IATA_FAA", "lat", "lon", "altitude")])
+```
+
+Let's generate a static map containing the location of all of the airports in the USA
+
+```{r, message=FALSE, warning=FALSE}
+library(ggmap)
+map <- get_map(location = "Seattle, WA", zoom = 3)
+ggmap(map) + geom_point(aes(x = lon, y = lat), data = usa_airports, alpha = 0.25)
+```
+
+Let's generate a zoomable, pannable map using the leaflet package. Here you can
+see airports that belong to the USA that aren't geographically within the borders
+of the United States.
+
+```{r}
+library(leaflet)
+m <- leaflet(data = usa_airports) %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addCircles(~lon, ~lat, popup = ~name)
+m  # Print the map
+```
