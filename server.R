@@ -1,24 +1,23 @@
 library(shiny)
 library(leaflet)
-library(plyr)
+library(dplyr)
 
 # This code runs exactly once. So we initialize some global variables
 # in our server to hold the airports data.
 
-airports <- read.csv("airports.dat", header = FALSE)
+airports <- read.csv("airports.dat", header = FALSE, stringsAsFactors = FALSE)
 colnames(airports) <- c("ID", "name", "city", "country", "IATA_FAA", 
                         "ICAO", "lat", "lon", "altitude", "timezone", 
                         "DST", "Region")
 
-# Generate a sorted list of countries. This demonstrates interesting 
-# type conversion list of factors -> list of char -> vector of char
+# Generate a sorted list of countries 
 
-countries <- sort(unlist(lapply(unique(airports$country), as.character)))
+countries <- sort(unique(airports$country))
 
 # Read data from routes.dat, that contains flight routes for all
 # airports. We will use this data to identify busy airports.
 
-routes <- read.csv("routes.dat", header = FALSE)
+routes <- read.csv("routes.dat", header = FALSE, stringsAsFactors = FALSE)
 colnames(routes) <- c("airline", "airlineID", "sourceAirport", 
                       "sourceAirportID", "destinationAirport", 
                       "destinationAirportID", "codeshare", "stops", 
@@ -27,11 +26,10 @@ colnames(routes) <- c("airline", "airlineID", "sourceAirport",
 # Extract a count of number of flights departing from an airport and create
 # a new data frame, where "nrow" is the name of the column with the flight count
 
-departures <- ddply(routes, .(sourceAirportID), "nrow")
-
-# Rename the column to flights to better represent the semantics of the data
-
-names(departures)[2] <- "departures"
+departures <- routes %>%
+    dplyr::filter(sourceAirportID != "\\N") %>%
+    group_by(sourceAirportID) %>%
+    summarize(departures = n())
 
 # Merge the departures data set with the original data set that contains that lattitude
 # and longitude of airports 
@@ -66,7 +64,7 @@ shinyServer(function(input, output) {
     # departures for the selected country
 
     output$slider <- renderUI({
-        country_data = subset(airports_with_departures, country == input$country)
+        country_data = airports_with_departures %>% filter(country == input$country)
         max_destinations = max(country_data$departures)
         sliderInput("departures", "Filter by departures:",
                     min = 1, max = max_destinations, value = c(1, max_destinations))
