@@ -7,10 +7,14 @@ pairs(mtcars)
 library(shiny)
 library(ggvis)
 
+# Plot some graphs ---
+
 mtcars %>%
     ggvis( ~ wt, ~ mpg) %>%
     layer_points() %>%
     layer_smooths()
+
+# ----
 
 # Dynamic plotting with random values
 
