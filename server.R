@@ -65,7 +65,8 @@ airports_with_departures <-
         by.x = "ID", 
         by.y = "sourceAirportID")
 
-# Tooltip column contains tooltips for each airport that gives its name (code): departures
+# Tooltip column contains tooltips for each airport 
+# that gives its name (code): departures
 
 airports_with_departures$tooltip <- 
     sprintf("%s (%s): %i", 
@@ -98,8 +99,8 @@ shinyServer(function(input, output) {
         )
     })
 
-    # Dynamically render the slider control based on the minimum and max
-    # departures for the selected country
+    # Dynamically render the slider control based on the
+    # minimum and max departures for the selected country
 
     output$slider <- renderUI({
         max_destinations = max(country_data()$departures)
@@ -127,7 +128,8 @@ shinyServer(function(input, output) {
             max_departures <- input$departures[2]
             airport_data <- 
                 country_data() %>%
-                filter(departures >= min_departures & departures <= max_departures)
+                filter(departures >= min_departures & 
+                    departures <= max_departures)
         }
 
         leaflet(data = airport_data) %>%
