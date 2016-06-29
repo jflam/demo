@@ -7,6 +7,8 @@ pairs(mtcars)
 library(shiny)
 library(ggvis)
 
+read.csv
+
 # Plot some graphs ---
 
 mtcars %>%

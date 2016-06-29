@@ -83,6 +83,7 @@ shinyServer(function(input, output) {
     # post backs from the web browser
 
     country_data <- reactive({
+        req(input$country)
         airports_with_departures %>% 
             filter(country == input$country)
     })
